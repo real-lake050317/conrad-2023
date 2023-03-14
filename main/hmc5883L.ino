@@ -24,16 +24,9 @@ bool detectHMC5883L () {
     char b = Wire.read();
     char c = Wire.read();
 
-    if (a == 'H' && b == '4' && c == '3') {
-      return true;
-    }
-    else {
-      return false;
-    }
+    if (a == 'H' && b == '4' && c == '3') return true;
   }
-  else {
-    return false;
-  }
+  return false;
 }
 
 void setup() {
