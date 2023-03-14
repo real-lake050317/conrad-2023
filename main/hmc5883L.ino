@@ -1,6 +1,6 @@
 #include <Wire.h> // I2C arduino lib
 
-#define HMC5883L_ADDR 0b0001110
+#define HMC5883L_ADDR 0b00011110
 
 #define _BV(bit) (1 << (bit))
 
