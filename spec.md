@@ -20,3 +20,8 @@
 2. Receive serial data.
 3. Use HC-06 bluetooth module.
 4. Get RPM control, on, off commands.
+
+#### Use below commands for bluetooth communication
+I - on
+O - off
+'RPM' - rpm
