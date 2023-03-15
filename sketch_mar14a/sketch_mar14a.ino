@@ -19,10 +19,16 @@ const int BT_TXD = 5;
 
 int currentDCSpeed = 0;
 
+int bottomServoDegrees = 0;
+int topServoDegrees = 0;
+
 bool isHMC5883LReady = false;
 bool isSystemOn = false;
 
 SoftwareSerial HC_60(BT_RXD, BT_TXD);
+Servo bottomServo;
+Servo topServo;
+
 
 bool detectHMC5883L () {
   Wire.beginTransmission(HMC5883L_ADDR);
@@ -54,11 +60,19 @@ void setDCSpeed(int sp) { // sp is the speed variable which has values in range 
   analogWrite(DC_SPEED, sp);
 }
 
-int firstServoAngle(int x, int y, int z){
+int topServoAngle(int x, int y, int z){
   return 90 - (int)(180.0*atanf((float)(y)/x)/PI); //range: [-pi/2, pi/2]
 }
 
-int secondServoAngle(int x, int y, int z){
+int bottomServoAngle (int x, int y, int z){
+  int tempAngle = 180.0*acosf((float)(z)/sqrt(x*x+y*y+z*z))/PI;
+  /*
+  if (angle >=0 && angle <=90){
+    return 90 - angle;
+  }
+  else{
+    return 
+  } */
   return 90 - (int)(180.0*acosf((float)(z)/sqrt(x*x+y*y+z*z))/PI); //range: [0,pi]
 }
 
@@ -71,6 +85,8 @@ void setup() {
   pinMode(DC_IN1, OUTPUT);
   pinMode(DC_IN2, OUTPUT);
   pinMode(DC_SPEED, OUTPUT);
+  bottomServo.attach(SERVO_ONE);
+  topServo.attach(SERVO_TWO);
 }
 
 void loop() {
@@ -136,6 +152,10 @@ void loop() {
       Serial.println();
     */
 
+    topServoDegrees = topServoAngle(mag_X, mag_Y, mag_Z);
+    bottomServoDegrees = bottomServoAngle(mag_X, mag_Y, mag_Z);
+
+    
 
     delay(250);
   }
