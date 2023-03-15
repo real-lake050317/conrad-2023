@@ -22,6 +22,6 @@
 4. Get RPM control, on, off commands.
 
 #### Use below commands for bluetooth communication
-I - on
-O - off
-'RPM' - rpm
+I - on <br>
+O - off <br>
+'RPM' - rpm 
