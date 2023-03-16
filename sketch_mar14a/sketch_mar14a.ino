@@ -1,14 +1,15 @@
 #include <Wire.h> // I2C arduino lib
 #include <SoftwareSerial.h>
 #include <Servo.h>
-#include <Math.h>
+#include <math.h>
 
 #define HMC5883L_ADDR 0b00011110
+#define CONST_PI 3.141592
 
 #define _BV(bit) (1 << (bit))
 
-const int SERVO_ONE = 9; // Servo 1 is the bottom servo
-const int SERVO_TWO = 10; // Servo 2 is the top servo
+const int SERVO_ONE = 9;     // Servo 1 is the bottom servo
+const int SERVO_TWO = 10;    // Servo 2 is the top servo
 const int HMC5883L_SDA = A4; // SDA pin for magnetometer
 const int HMC5883L_SCL = A5; // SCL pin for magnetometer
 const int DC_IN1 = 2;
@@ -29,8 +30,7 @@ SoftwareSerial HC_60(BT_RXD, BT_TXD);
 Servo bottomServo;
 Servo topServo;
 
-
-bool detectHMC5883L () {
+bool detectHMC5883L() {
   Wire.beginTransmission(HMC5883L_ADDR);
   Wire.write(0b1010);
   Wire.endTransmission();
@@ -41,7 +41,8 @@ bool detectHMC5883L () {
     char b = Wire.read();
     char c = Wire.read();
 
-    if (a == 'H' && b == '4' && c == '3') return true;
+    if (a == 'H' && b == '4' && c == '3')
+      return true;
   }
   return false;
 }
@@ -60,20 +61,15 @@ void setDCSpeed(int sp) { // sp is the speed variable which has values in range 
   analogWrite(DC_SPEED, sp);
 }
 
-int topServoAngle(int x, int y, int z){
-  return 90 - (int)(180.0*atanf((float)(y)/x)/PI); //range: [-pi/2, pi/2]
+int topServoAngle(int x, int y, int z) {
+  if (y >= 0) {
+    return (int)(180.0*atanf((float)(y)/x)/CONST_PI);
+  }
+  return (int)(180.0*atanf((float)(y)/x)/CONST_PI) + 180;
 }
 
-int bottomServoAngle (int x, int y, int z){
-  int tempAngle = 180.0*acosf((float)(z)/sqrt(x*x+y*y+z*z))/PI;
-  /*
-  if (angle >=0 && angle <=90){
-    return 90 - angle;
-  }
-  else{
-    return 
-  } */
-  return 90 - (int)(180.0*acosf((float)(z)/sqrt(x*x+y*y+z*z))/PI); //range: [0,pi]
+int bottomServoAngle(int x, int y, int z) {
+  return (int)(180.0*acosf((float)(z)/sqrt(x*x+y*y+z*z))/CONST_PI);
 }
 
 void setup() {
@@ -94,15 +90,20 @@ void loop() {
     char val = Serial.read();
     if (val == 'I') { // Turn on the system
       isSystemOn = true;
-    } else if (val == 'O') { // Turn off the system
+    }
+    else if (val == 'O') { // Turn off the system
       isSystemOn = false;
       stopDC();
-    } else if ((int)val >= 48 && (int)val <= 57) {
+    }
+    else if ((int)val >= 48 && (int)val <= 57) {
       currentDCSpeed = ((int)val - 48) * 28;
+    } else {
+      Serial.println("Invalid input");
     }
   }
 
   bool isMagnetoReady = detectHMC5883L();
+
   if (isSystemOn) {
     if (!isHMC5883LReady) {
       if (isMagnetoReady) {
@@ -112,7 +113,8 @@ void loop() {
         Wire.write(0x02); // select register mode
         Wire.write(0x00); // continuous mesurement mode
         Wire.endTransmission();
-      } else {
+      }
+      else {
         Serial.println("HMC5883L is not ready.. Trying again");
         delay(2000);
         return;
@@ -136,11 +138,11 @@ void loop() {
     Wire.requestFrom(HMC5883L_ADDR, 6); // 2 registers per axis; total of 6
     if (6 <= Wire.available()) {
       mag_X = Wire.read() << 8; // X msb
-      mag_X |= Wire.read(); // X lsb
+      mag_X |= Wire.read();     // X lsb
       mag_Z = Wire.read() << 8; // Z msb
-      mag_Z |= Wire.read(); // Z lsb
+      mag_Z |= Wire.read();     // Z lsb
       mag_Y = Wire.read() << 8; // Y msb
-      mag_Y |= Wire.read(); // Y lsb
+      mag_Y |= Wire.read();     // Y lsb
     }
 
     /*
@@ -155,8 +157,9 @@ void loop() {
     topServoDegrees = topServoAngle(mag_X, mag_Y, mag_Z);
     bottomServoDegrees = bottomServoAngle(mag_X, mag_Y, mag_Z);
 
-    
+    topServo.write(topServoDegrees);
+    bottomServo.write(bottomServoDegrees);
 
-    delay(250);
+    delay(1000);
   }
 }
