@@ -1,5 +1,8 @@
+#pragma once
+
 #ifndef variables
 #define variables
+
 #define HMC5883L_ADDR 0b00011110
 #define CONST_PI 3.141592
 
@@ -14,16 +17,5 @@
 #define DC_SPEED 11
 #define BT_RXD 6
 #define BT_TXD 5
-
-int topServoAngle (int x, int y, int z) {
-    if (y >= 0) {
-        return (int)(180.0*atanf((float)(y)/x)/CONST_PI);
-    }
-    return (int)(180.0*atanf((float)(y)/x)/CONST_PI) + 180;
-};
-
-int bottomServoAngle (int x, int y, int z) {
-    return (int)(180.0*acosf((float)(z)/sqrt(x*x + y*y + z*z))/CONST_PI);
-};
 
 #endif
