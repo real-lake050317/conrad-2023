@@ -1,22 +1,8 @@
 #include <Wire.h> // I2C arduino lib
 #include <SoftwareSerial.h>
 #include <Servo.h>
-#include <math.h>
-
-#define HMC5883L_ADDR 0b00011110
-#define CONST_PI 3.141592
-
-#define _BV(bit) (1 << (bit))
-
-const int SERVO_ONE = 9;     // Servo 1 is the bottom servo
-const int SERVO_TWO = 10;    // Servo 2 is the top servo
-const int HMC5883L_SDA = A4; // SDA pin for magnetometer
-const int HMC5883L_SCL = A5; // SCL pin for magnetometer
-const int DC_IN1 = 2;
-const int DC_IN2 = 3;
-const int DC_SPEED = 11;
-const int BT_RXD = 6;
-const int BT_TXD = 5;
+#include "variables.h"
+#include "calculations.h"
 
 int currentDCSpeed = 0;
 
@@ -61,16 +47,6 @@ void setDCSpeed(int sp) { // sp is the speed variable which has values in range 
   analogWrite(DC_SPEED, sp);
 }
 
-int topServoAngle(int x, int y, int z) {
-  if (y >= 0) {
-    return (int)(180.0*atanf((float)(y)/x)/CONST_PI);
-  }
-  return (int)(180.0*atanf((float)(y)/x)/CONST_PI) + 180;
-}
-
-int bottomServoAngle(int x, int y, int z) {
-  return (int)(180.0*acosf((float)(z)/sqrt(x*x+y*y+z*z))/CONST_PI);
-}
 
 void setup() {
   Serial.begin(9600);
