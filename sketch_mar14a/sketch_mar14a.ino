@@ -81,6 +81,9 @@ void loop() {
   bool isMagnetoReady = detectHMC5883L();
 
   if (isSystemOn) {
+    digitalWrite(DC_IN1, HIGH);
+    digitalWrite(DC_IN2, LOW);
+    analogWrite(DC_SPEED, currentDCSpeed);
     if (!isHMC5883LReady) {
       if (isMagnetoReady) {
         isHMC5883LReady = true;
@@ -137,5 +140,8 @@ void loop() {
     bottomServo.write(bottomServoDegrees);
 
     delay(1000);
+  } else {
+    digitalWrite(DC_IN1, LOW);
+    digitalWrite(DC_IN2, LOW);
   }
 }
