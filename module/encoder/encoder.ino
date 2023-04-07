@@ -1,15 +1,10 @@
-const int HALL_A_BOUT = A0;
-const int HALL_B_BOUT = A1;
+const int HALL_PIN = A0;
 
 void setup() {
-    Serial.begin(9600);
-    pinMode(HALL_A_BOUT, INPUT);
-    pinMode(HALL_B_BOUT, INPUT);
+  Serial.begin(9600);
 }
 
 void loop() {
-    Serial.print(analogRead(HALL_A_BOUT));
-    Serial.print(" ");
-    Serial.println(analogRead(HALL_B_BOUT));
-    delay(100);
+  Serial.println(analogRead(HALL_A_BOUT));
+  delay(100);
 }
