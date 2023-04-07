@@ -67,9 +67,10 @@ void loop() {
     
     // Wait for the motor to rotate
     delay(10);
-    
+
+
     // Print the encoder count
-    Serial.println(encoder_count);
+    Serial.println(encoder_count - (encoder_count/360)*360);
   }
   
   // Stop the motor
