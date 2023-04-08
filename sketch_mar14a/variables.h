@@ -17,5 +17,7 @@
 #define DC_SPEED 11
 #define BT_RXD 6
 #define BT_TXD 5
+#define HALL_A_PIN 7
+#define HALL_B_PIN 8
 
 #endif
